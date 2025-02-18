@@ -28,6 +28,7 @@ export default function StripePage() {
   const [customerId, setCustomerId] = useState<string>("");
   const [creditBalanceAmount, setCreditBalanceAmount] = useState("");
   const [debitBalanceAmount, setDebitBalanceAmount] = useState("");
+  const [customerName, setCustomerName] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{
     type: "success" | "error";
@@ -94,7 +95,7 @@ export default function StripePage() {
 
   const handleCreateCustomer = () =>
     handleAction(async () => {
-      const result = await createCustomer();
+      const result = await createCustomer(customerName);
       setCustomerId(result.id);
       return result;
     }, "Customer created successfully");
@@ -158,9 +159,16 @@ export default function StripePage() {
           )}
 
           <div className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Customer Name"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="flex-1"
+            />
             <Button
               onClick={handleCreateCustomer}
-              disabled={loading}
+              disabled={loading || !customerName}
               className="w-full"
             >
               Create Customer

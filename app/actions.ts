@@ -12,10 +12,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2025-01-27.acacia",
 });
 
-export async function createCustomer() {
+export async function createCustomer(customerName: string) {
   try {
     const customer = await stripe.customers.create({
-      name: "John Doe",
+      name: customerName,
       email: "john.doe@example.com",
     });
     return customer;
