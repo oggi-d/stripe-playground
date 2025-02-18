@@ -127,7 +127,7 @@ export async function debitBalance(
     const currentBalance = customer.balance || 0;
     console.log("====== currentBalance: ", currentBalance);
 
-    if (currentBalance < amountInCents) {
+    if (currentBalance + amountInCents > 0) {
       throw new Error("Insufficient balance to cover the transaction");
     }
 
