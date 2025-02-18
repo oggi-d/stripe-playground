@@ -92,7 +92,7 @@ export async function chargeCustomerAndCreditBalance(
     if (paymentIntent.status === "succeeded") {
       const balanceTransaction =
         await stripe.customers.createBalanceTransaction(customerId, {
-          amount: amountInCents,
+          amount: -amountInCents,
           currency: "usd",
           description: "Funding customer balance from default payment method",
         });
@@ -118,21 +118,27 @@ export async function debitBalance(
     throw new Error("Valid amount is required");
 
   const amountInCents = Math.round(amountInDollars * 100);
-  const customer = await stripe.customers.retrieve(customerId);
-
-  if ("deleted" in customer) {
-    throw new Error("Customer has been deleted");
-  }
-  const currentBalance = customer.balance || 0;
-
-  if (currentBalance < amountInCents) {
-    throw new Error("Insufficient balance to cover the transaction");
-  }
 
   try {
-    const updatedCustomer = await stripe.customers.update(customerId, {
-      balance: currentBalance - amountInCents,
-    });
+    const customer = await stripe.customers.retrieve(customerId);
+    if ("deleted" in customer) {
+      throw new Error("Customer has been deleted");
+    }
+    const currentBalance = customer.balance || 0;
+    console.log("====== currentBalance: ", currentBalance);
+
+    if (currentBalance < amountInCents) {
+      throw new Error("Insufficient balance to cover the transaction");
+    }
+
+    const updatedCustomer = await stripe.customers.createBalanceTransaction(
+      customerId,
+      {
+        amount: amountInCents, // Use a positive amount to debit the balance
+        currency: "usd",
+        description: "Debiting customer balance",
+      }
+    );
 
     return updatedCustomer;
   } catch (error) {
