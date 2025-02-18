@@ -171,7 +171,7 @@ export default function StripePage() {
               disabled={loading || !customerName}
               className="w-full"
             >
-              Create Customer
+              1. Create Customer
             </Button>
 
             <Button
@@ -179,7 +179,7 @@ export default function StripePage() {
               disabled={loading || !customerId}
               className="w-full"
             >
-              Initiate Stripe Checkout Setup
+              2. Setup Your Primary Payment Method
             </Button>
 
             <Button
@@ -187,7 +187,7 @@ export default function StripePage() {
               disabled={loading || !customerId}
               className="w-full"
             >
-              Update Stripe Setup
+              3. Manage Your Payment Methods
             </Button>
 
             <div className="space-y-2">
@@ -204,7 +204,7 @@ export default function StripePage() {
                   disabled={loading || !customerId || !creditBalanceAmount}
                   className="flex-1"
                 >
-                  Credit Customer Balance
+                  4. Credit
                 </Button>
               </div>
               <div className="flex space-x-2">
@@ -220,7 +220,7 @@ export default function StripePage() {
                   disabled={loading || !debitBalanceAmount}
                   className="flex-1"
                 >
-                  Debit Customer Balance
+                  5. Debit
                 </Button>
               </div>
             </div>
