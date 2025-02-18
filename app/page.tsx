@@ -227,18 +227,29 @@ export default function StripePage() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col items-start">
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm">
             {customerId && (
-              <p>
-                Current Customer ID: {customerId}
-                <a
-                  href={`https://dashboard.stripe.com/test/customers/${customerId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View in Stripe Dashboard
-                </a>
-              </p>
+              <span className="mr-2 text-muted-foreground">
+                Current Customer ID:{" "}
+                <span className="text-blue-600">{customerId}</span>
+              </span>
+            )}
+            {customerId && (
+              <a
+                href={`https://dashboard.stripe.com/test/customers/${customerId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#3b82f6",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  transition: "color 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#1d4ed8")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#3b82f6")}
+              >
+                View in Stripe Dashboard
+              </a>
             )}
           </div>
         </CardFooter>
