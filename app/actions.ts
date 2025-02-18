@@ -14,7 +14,7 @@ export async function createCustomer(customerName: string) {
   try {
     const customer = await stripe.customers.create({
       name: customerName,
-      email: "john.doe@example.com",
+      email: `${customerName}@example.com`,
     });
     return customer;
   } catch (error) {

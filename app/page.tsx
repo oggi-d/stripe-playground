@@ -228,7 +228,18 @@ export default function StripePage() {
         </CardContent>
         <CardFooter className="flex flex-col items-start">
           <div className="text-sm text-muted-foreground">
-            {customerId && <p>Current Customer ID: {customerId}</p>}
+            {customerId && (
+              <p>
+                Current Customer ID: {customerId}
+                <a
+                  href={`https://dashboard.stripe.com/test/customers/${customerId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View in Stripe Dashboard
+                </a>
+              </p>
+            )}
           </div>
         </CardFooter>
       </Card>
