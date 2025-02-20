@@ -22,6 +22,7 @@ import {
   retrieveSetupIntent,
   chargeCustomerAndCreditBalance,
   debitBalance,
+  initiateCheckoutSession,
 } from "./actions";
 
 export default function StripePage() {
@@ -34,6 +35,7 @@ export default function StripePage() {
     type: "success" | "error";
     message: string;
   } | null>(null);
+  const [checkoutBalanceAmount, setCheckoutBalanceAmount] = useState("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -135,6 +137,18 @@ export default function StripePage() {
       `Successfully debited customer balance with $${debitBalanceAmount}`
     );
 
+  const handleCreditBalanceWithCheckout = () =>
+    handleAction(async () => {
+      const checkoutSession = await initiateCheckoutSession(
+        customerId,
+        Number.parseInt(checkoutBalanceAmount)
+      );
+      if (checkoutSession.url) {
+        window.location.href = checkoutSession.url;
+      }
+      return checkoutSession;
+    }, "Redirecting to Stripe Checkout");
+
   return (
     <div className="container mx-auto p-4">
       <Card className="w-full max-w-2xl mx-auto">
@@ -204,7 +218,7 @@ export default function StripePage() {
                   disabled={loading || !customerId || !creditBalanceAmount}
                   className="flex-1"
                 >
-                  4. Credit
+                  4. Credit - Automatic
                 </Button>
               </div>
               <div className="flex space-x-2">
@@ -220,7 +234,23 @@ export default function StripePage() {
                   disabled={loading || !debitBalanceAmount}
                   className="flex-1"
                 >
-                  5. Debit
+                  5. Debit - Automatic
+                </Button>
+              </div>
+              <div className="flex space-x-2">
+                <Input
+                  type="number"
+                  placeholder="Amount in dollars"
+                  value={checkoutBalanceAmount}
+                  onChange={(e) => setCheckoutBalanceAmount(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={handleCreditBalanceWithCheckout}
+                  disabled={loading || !customerId || !checkoutBalanceAmount}
+                  className="flex-1"
+                >
+                  6. Credit - Manual
                 </Button>
               </div>
             </div>

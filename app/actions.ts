@@ -214,3 +214,43 @@ export async function retrieveDefaultPaymentMethodId(customerId: string) {
     );
   }
 }
+
+export async function initiateCheckoutSession(
+  customerId: string,
+  amountInDollars: number
+) {
+  if (!customerId) throw new Error("Customer ID is required");
+  if (!amountInDollars || amountInDollars <= 0)
+    throw new Error("Valid amount is required");
+
+  const amountInCents = Math.round(amountInDollars * 100);
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "Credit Balance",
+            },
+            unit_amount: amountInCents,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      customer: customerId,
+      success_url: `${process.env.NEXT_PUBLIC_URL}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL}?canceled=true`,
+    });
+    return session;
+  } catch (error) {
+    throw new Error(
+      error instanceof Stripe.errors.StripeError
+        ? error.message
+        : "Failed to create checkout session"
+    );
+  }
+}
