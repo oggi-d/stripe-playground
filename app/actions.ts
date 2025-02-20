@@ -35,7 +35,7 @@ export async function initiateSetup(customerId: string) {
       customer: customerId,
       payment_method_types: ["card"],
       success_url: `${process.env.NEXT_PUBLIC_URL}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL}?canceled=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL}?canceled=true&customer_id=${customerId}`,
     });
     return session;
   } catch (error) {
@@ -243,7 +243,7 @@ export async function initiateCheckoutSession(
       mode: "payment",
       customer: customerId,
       success_url: `${process.env.NEXT_PUBLIC_URL}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL}?canceled=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL}?canceled=true&customer_id=${customerId}`,
     });
     return session;
   } catch (error) {
