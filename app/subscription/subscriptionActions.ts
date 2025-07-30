@@ -74,10 +74,10 @@ export async function createCheckoutSession(
     ],
     mode: "subscription",
     success_url: `${
-      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+      process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
     }/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${
-      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+      process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
     }/subscription/${planType}`,
     allow_promotion_codes: false,
     billing_address_collection: "required",
@@ -108,7 +108,7 @@ export async function createBillingPortalSession(sessionId: string) {
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customer.id,
       return_url: `${
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
       }/subscription/success?session_id=${sessionId}`,
     });
 
