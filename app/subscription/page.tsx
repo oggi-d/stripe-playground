@@ -75,13 +75,6 @@ export default function SubscriptionPage() {
           Select the perfect plan for your needs. Upgrade or downgrade at any
           time.
         </p>
-        <div className="mb-8">
-          <Link href="/subscription/manage-payment">
-            <Button variant="outline" size="sm">
-              Already subscribed? Manage Payment Methods
-            </Button>
-          </Link>
-        </div>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">

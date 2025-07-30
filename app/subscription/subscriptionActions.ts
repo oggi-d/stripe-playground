@@ -79,7 +79,7 @@ export async function createCheckoutSession(
     cancel_url: `${
       process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
     }/subscription/${planType}`,
-    allow_promotion_codes: true,
+    allow_promotion_codes: false,
     billing_address_collection: "required",
     customer_update: {
       address: "auto",
