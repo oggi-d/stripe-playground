@@ -23,7 +23,9 @@ import {
   chargeCustomerAndCreditBalance,
   debitBalance,
   initiateCheckoutSession,
+  initiateSetupIntent,
 } from "./actions";
+import Stripe from "stripe";
 
 export default function StripePage() {
   const [customerId, setCustomerId] = useState<string>("");
@@ -149,6 +151,18 @@ export default function StripePage() {
       return checkoutSession;
     }, "Redirecting to Stripe Checkout");
 
+  const handleInitiateSetupIntent = () =>
+    handleAction(async () => {
+      const setupIntentResult = await initiateSetupIntent(customerId);
+      if (setupIntentResult.client_secret) {
+        console.log(
+          "SetupIntent created successfully",
+          setupIntentResult.client_secret
+        );
+      }
+      return setupIntentResult;
+    }, "SetupIntent created successfully");
+
   return (
     <div className="container mx-auto p-4">
       <Card className="w-full max-w-2xl mx-auto">
@@ -194,6 +208,14 @@ export default function StripePage() {
               className="w-full"
             >
               2. Setup Your Primary Payment Method
+            </Button>
+
+            <Button
+              onClick={handleInitiateSetupIntent}
+              disabled={loading || !customerId}
+              className="w-full"
+            >
+              2.a. Setup Your Primary Payment Method with SetupIntent
             </Button>
 
             <Button

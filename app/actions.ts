@@ -254,3 +254,21 @@ export async function initiateCheckoutSession(
     );
   }
 }
+
+export async function initiateSetupIntent(customerId: string) {
+  if (!customerId) throw new Error("Customer ID is required");
+
+  try {
+    const setupIntent = await stripe.setupIntents.create({
+      customer: customerId,
+      payment_method_types: ["card"],
+    });
+    return setupIntent;
+  } catch (error) {
+    throw new Error(
+      error instanceof Stripe.errors.StripeError
+        ? error.message
+        : "Failed to create setup intent"
+    );
+  }
+}
