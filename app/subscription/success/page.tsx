@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Card,
@@ -14,7 +14,7 @@ import { CheckCircleIcon, LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { createBillingPortalSession } from "../subscriptionActions";
 
-export default function SuccessPage() {
+function SuccessPageContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [loading, setLoading] = useState(true);
@@ -127,5 +127,24 @@ export default function SuccessPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardContent className="flex items-center justify-center p-8">
+              <LoaderIcon className="w-8 h-8 animate-spin text-blue-500" />
+              <span className="ml-2">Loading...</span>
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
+      <SuccessPageContent />
+    </Suspense>
   );
 }
