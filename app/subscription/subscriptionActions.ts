@@ -33,9 +33,33 @@ export async function getCustomer(email: string) {
     limit: 1,
   });
   if (existingCustomers.data.length > 0) {
-    return existingCustomers.data[0];
+    const customer = await stripe.customers.retrieve(
+      existingCustomers.data[0].id,
+      {
+        expand: ["subscriptions"],
+      }
+    );
+    return customer;
   }
   return null;
+}
+
+export async function getCustomerWithSubscriptions(email: string) {
+  const customer = await getCustomer(email);
+  if (!customer) {
+    return null;
+  }
+
+  // Get all subscriptions for the customer
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customer.id,
+    status: "all",
+  });
+
+  return {
+    ...customer,
+    subscriptions: subscriptions.data,
+  };
 }
 
 export async function createCustomer(email: string) {
@@ -118,6 +142,52 @@ export async function createBillingPortalSession(sessionId: string) {
       error instanceof Stripe.errors.StripeError
         ? error.message
         : "Failed to create billing portal session"
+    );
+  }
+}
+
+export async function cancelSubscription(sessionId: string) {
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const email = session.customer_details?.email;
+    if (!email) {
+      throw new Error("Email not found in session");
+    }
+
+    const customerWithSubscriptions = await getCustomerWithSubscriptions(email);
+    if (!customerWithSubscriptions) {
+      throw new Error("Customer not found. Please contact support.");
+    }
+
+    // Find active subscriptions
+    const activeSubscriptions = customerWithSubscriptions.subscriptions.filter(
+      (sub) => sub.status === "active" || sub.status === "trialing"
+    );
+
+    if (activeSubscriptions.length === 0) {
+      throw new Error("No active subscription found for customer");
+    }
+
+    // Cancel the first active subscription at period end (in most cases there should be only one)
+    const subscription = activeSubscriptions[0];
+    const updatedSubscription = await stripe.subscriptions.update(
+      subscription.id,
+      {
+        cancel_at_period_end: true,
+      }
+    );
+
+    return {
+      subscriptionId: updatedSubscription.id,
+      status: updatedSubscription.status,
+      cancelAtPeriodEnd: updatedSubscription.cancel_at_period_end,
+      currentPeriodEnd: updatedSubscription.current_period_end,
+    };
+  } catch (error) {
+    throw new Error(
+      error instanceof Stripe.errors.StripeError
+        ? error.message
+        : "Failed to cancel subscription"
     );
   }
 }

@@ -12,7 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircleIcon, LoaderIcon } from "lucide-react";
 import Link from "next/link";
-import { createBillingPortalSession } from "../subscriptionActions";
+import {
+  cancelSubscription,
+  createBillingPortalSession,
+} from "../subscriptionActions";
 
 function SuccessPageContent() {
   const searchParams = useSearchParams();
@@ -32,6 +35,15 @@ function SuccessPageContent() {
     } else {
       setError("Failed to create billing portal session");
     }
+  };
+
+  const handleCancelSubscription = async () => {
+    if (!sessionId) {
+      setError("No session ID found");
+      return;
+    }
+    await cancelSubscription(sessionId);
+    alert("Subscription cancelled successfully");
   };
 
   useEffect(() => {
@@ -113,6 +125,15 @@ function SuccessPageContent() {
               onClick={handleManagePayment}
             >
               Manage Payment Methods
+            </Button>
+          </div>
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full block"
+              onClick={handleCancelSubscription}
+            >
+              Cancel Subscription
             </Button>
           </div>
 
